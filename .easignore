@@ -1,0 +1,11 @@
+# Fichiers à ignorer pour EAS Build
+node_modules/
+.expo/
+.git/
+dist/
+build/
+web-build/
+*.log
+.DS_Store
+.vscode/
+.idea/
