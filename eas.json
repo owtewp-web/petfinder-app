@@ -1,13 +1,16 @@
 {
   "cli": {
-    "version": ">= 15.0.6",
-    "appVersionSource": "remote",
-    "requireCommit": "true"
+    "version": ">= 16.18.0"
   },
   "build": {
     "preview": {
       "android": {
         "buildType": "apk"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
       }
     }
   }
