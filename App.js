@@ -1,185 +1,84 @@
-// App.js - Gestion de la navigation principale
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+// App.js - Version test simple pour vérifier le build
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import AuthScreen from './screens/AuthScreen';
-import HomeScreen from './screens/HomeScreen';
-import PetDetailScreen from './screens/PetDetailScreen';
-import SightingScreen from './screens/SightingScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import CreateScreen from './screens/CreateScreen';
-import MessagesScreen from './screens/MessagesScreen';
-import ChatScreen from './screens/ChatScreen';
-import MyAnimalsScreen from './screens/MyAnimalsScreen';
 
 export default function App() {
-  // État pour gérer la navigation entre les écrans
-  const [currentScreen, setCurrentScreen] = useState('auth');
-  const [selectedPet, setSelectedPet] = useState(null);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Fonction pour gérer la connexion depuis AuthScreen
-  const handleLogin = () => {
-    console.log('Utilisateur connecté !');
-    setIsLoggedIn(true);
-    setCurrentScreen('home');
-  };
-
-  // Fonction pour naviguer vers le profil
-  const handleNavigateToProfile = () => {
-    console.log('Navigation vers le profil');
-    setCurrentScreen('profile');
-  };
-
-  // Fonction pour naviguer vers le détail d'un animal
-  const handleNavigateToDetail = (pet) => {
-    console.log('Navigation vers le détail de:', pet.name);
-    setSelectedPet(pet);
-    setCurrentScreen('detail');
-  };
-
-  // Fonction pour naviguer vers la création d'annonce
-  const handleNavigateToCreate = () => {
-    console.log('Navigation vers la création d\'annonce');
-    setCurrentScreen('create');
-  };
-
-  // Fonction pour naviguer vers le signalement d'observation
-  const handleNavigateToSighting = (pet) => {
-    console.log('Navigation vers signalement pour:', pet.name);
-    setSelectedPet(pet);
-    setCurrentScreen('sighting');
-  };
-
-  // Fonction pour naviguer vers les messages
-  const handleNavigateToMessages = () => {
-    console.log('Navigation vers les messages');
-    setCurrentScreen('messages');
-  };
-
-  // Fonction pour naviguer vers un chat spécifique
-  const handleNavigateToChat = (announcement) => {
-    console.log('Navigation vers chat pour:', announcement.petName);
-    setSelectedAnnouncement(announcement);
-    setCurrentScreen('chat');
-  };
-
-  // Fonction pour naviguer vers mes animaux
-  const handleNavigateToMyAnimals = () => {
-    console.log('Navigation vers mes animaux');
-    setCurrentScreen('myanimals');
-  };
-
-  // Fonction pour revenir à l'accueil
-  const handleNavigateToHome = () => {
-    console.log('Retour à l\'accueil');
-    setCurrentScreen('home');
-    setSelectedPet(null);
-    setSelectedAnnouncement(null);
-  };
-
-  // Gestion de l'affichage des écrans selon l'état
-  const renderCurrentScreen = () => {
-    switch (currentScreen) {
-      case 'auth':
-        return <AuthScreen onLogin={handleLogin} />;
-      
-      case 'home':
-        return (
-          <HomeScreen
-            onNavigateToProfile={handleNavigateToProfile}
-            onNavigateToDetail={handleNavigateToDetail}
-            onNavigateToCreate={handleNavigateToCreate}
-            onNavigateToMessages={handleNavigateToMessages}
-            onNavigateToMyAnimals={handleNavigateToMyAnimals}
-          />
-        );
-      
-      case 'profile':
-        return (
-          <ProfileScreen
-            onNavigateBack={handleNavigateToHome}
-          />
-        );
-      
-      case 'detail':
-        return (
-          <PetDetailScreen
-            selectedPet={selectedPet}
-            onNavigateBack={handleNavigateToHome}
-            onNavigateToSighting={handleNavigateToSighting}
-            onNavigateToChat={handleNavigateToChat}
-          />
-        );
-      
-      case 'create':
-        return (
-          <CreateScreen
-            onNavigateBack={handleNavigateToHome}
-            selectedPet={selectedPet}
-            editMode={selectedPet ? true : false}
-          />
-        );
-      
-      case 'sighting':
-        return (
-          <SightingScreen
-            selectedPet={selectedPet}
-            onNavigateBack={() => setCurrentScreen('detail')}
-          />
-        );
-      
-      case 'messages':
-        return (
-          <MessagesScreen
-            onNavigateBack={handleNavigateToHome}
-            onNavigateToChat={handleNavigateToChat}
-          />
-        );
-      
-      case 'chat':
-        return (
-          <ChatScreen
-            selectedAnnouncement={selectedAnnouncement}
-            onNavigateBack={() => setCurrentScreen('messages')}
-            onNavigateToSighting={(announcement) => {
-              setSelectedPet(announcement);
-              setCurrentScreen('sighting');
-            }}
-          />
-        );
-      
-      case 'myanimals':
-        return (
-          <MyAnimalsScreen
-            onNavigateBack={handleNavigateToHome}
-            onNavigateToCreate={handleNavigateToCreate}
-            onNavigateToEdit={(announcement, mode) => {
-              setSelectedPet(announcement);
-              setCurrentScreen('create'); // Réutilise l'écran de création mais en mode édition
-            }}
-            onNavigateToMessages={(announcement) => {
-              setSelectedAnnouncement(announcement);
-              setCurrentScreen('chat');
-            }}
-          />
-        );
-      
-      default:
-        return <AuthScreen onLogin={handleLogin} />;
-    }
-  };
-
   return (
-    <>
-      {renderCurrentScreen()}
+    <View style={styles.container}>
       <StatusBar style="auto" />
-    </>
+      
+      <Text style={styles.title}>🐾 PetFinder</Text>
+      <Text style={styles.subtitle}>Application de test</Text>
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>✅ Build réussi !</Text>
+        <Text style={styles.cardText}>• APK généré avec succès</Text>
+        <Text style={styles.cardText}>• GitHub synchronisé</Text>
+        <Text style={styles.cardText}>• Prêt pour les tests</Text>
+      </View>
+      
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Test Button</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Styles supprimés car ils ne sont plus utilisés
-  // Chaque écran gère maintenant ses propres styles
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#3B82F6',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#6B7280',
+    marginBottom: 32,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#059669',
+    marginBottom: 16,
+  },
+  cardText: {
+    fontSize: 14,
+    color: '#374151',
+    marginBottom: 8,
+  },
+  button: {
+    backgroundColor: '#3B82F6',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 12,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
