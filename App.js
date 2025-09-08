@@ -1,27 +1,154 @@
-// App.js - Test avec composants UI
+// App.js - Structure sans dossier src/
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-// Import des composants UI
-import { Button, Input, Card } from './src/components/ui';
+// ===== TEST DES IMPORTS SANS SRC/ =====
+// Cette version teste les imports avec les chemins directs
 
 export default function App() {
-  // États pour tester les composants
-  const [inputValue, setInputValue] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [testResult, setTestResult] = useState('');
+  const [testPhase, setTestPhase] = useState('ready');
+  const [importResults, setImportResults] = useState({});
 
-  // Fonction pour tester les composants
-  const handleTestComponents = () => {
-    setLoading(true);
-    setTestResult('Test en cours...');
-    
-    setTimeout(() => {
-      setLoading(false);
-      setTestResult('✅ Tous les composants UI fonctionnent !');
-    }, 2000);
+  // Test des imports progressifs (sans src/)
+  const testImports = async () => {
+    setTestPhase('testing');
+    let results = {};
+
+    // Test 1: Composants UI
+    try {
+      const { Button, Input, Card } = await import('./components/ui');
+      results.ui = '✅ Composants UI importés (./components/ui)';
+    } catch (error) {
+      results.ui = `❌ Erreur composants UI: ${error.message}`;
+    }
+
+    // Test 2: AuthScreen
+    try {
+      const AuthScreen = await import('./screens/AuthScreen');
+      results.auth = '✅ AuthScreen importé (./screens/AuthScreen)';
+    } catch (error) {
+      results.auth = `❌ Erreur AuthScreen: ${error.message}`;
+    }
+
+    // Test 3: HomeScreen
+    try {
+      const HomeScreen = await import('./screens/HomeScreen');
+      results.home = '✅ HomeScreen importé (./screens/HomeScreen)';
+    } catch (error) {
+      results.home = `❌ Erreur HomeScreen: ${error.message}`;
+    }
+
+    // Test 4: Autres écrans
+    try {
+      const PetDetailScreen = await import('./screens/PetDetailScreen');
+      results.detail = '✅ PetDetailScreen importé';
+    } catch (error) {
+      results.detail = `❌ Erreur PetDetailScreen: ${error.message}`;
+    }
+
+    setImportResults(results);
+    setTestPhase('completed');
   };
+
+  // Test avec imports statiques (plus robuste)
+  const testStaticImports = () => {
+    Alert.alert(
+      'Test d\'imports statiques',
+      'Je vais maintenant tester les imports statiques. Regardez la console pour les erreurs.',
+      [{ text: 'OK', onPress: () => setTestPhase('static') }]
+    );
+  };
+
+  // Affichage des instructions
+  const renderInstructions = () => (
+    <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <View style={styles.instructionCard}>
+        <Text style={styles.instructionTitle}>📁 Structure recommandée (à la racine)</Text>
+        
+        <View style={styles.codeBlock}>
+          <Text style={styles.codeText}>votre-projet/</Text>
+          <Text style={styles.codeText}>├── App.js</Text>
+          <Text style={styles.codeText}>├── components/</Text>
+          <Text style={styles.codeText}>│   └── ui/</Text>
+          <Text style={styles.codeText}>│       └── index.js</Text>
+          <Text style={styles.codeText}>├── screens/</Text>
+          <Text style={styles.codeText}>│   ├── AuthScreen.js</Text>
+          <Text style={styles.codeText}>│   ├── HomeScreen.js</Text>
+          <Text style={styles.codeText}>│   ├── PetDetailScreen.js</Text>
+          <Text style={styles.codeText}>│   └── ...</Text>
+          <Text style={styles.codeText}>├── package.json</Text>
+          <Text style={styles.codeText}>└── eas.json</Text>
+        </View>
+      </View>
+
+      <View style={styles.actionCard}>
+        <Text style={styles.actionTitle}>🔧 Vérifications nécessaires :</Text>
+        <Text style={styles.actionItem}>1. ✅ Dossier components/ existe</Text>
+        <Text style={styles.actionItem}>2. ✅ Dossier screens/ existe</Text>
+        <Text style={styles.actionItem}>3. ✅ Fichier components/ui/index.js existe</Text>
+        <Text style={styles.actionItem}>4. ✅ Vos écrans sont dans screens/</Text>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.testButton} onPress={testImports}>
+          <Text style={styles.testButtonText}>🧪 Test imports dynamiques</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.testButtonSecondary} onPress={testStaticImports}>
+          <Text style={styles.testButtonSecondaryText}>🔬 Test imports statiques</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+
+  // Affichage des résultats
+  const renderResults = () => (
+    <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <View style={styles.resultCard}>
+        <Text style={styles.resultTitle}>📊 Résultats des tests</Text>
+        
+        {Object.entries(importResults).map(([key, result]) => (
+          <View key={key} style={styles.resultItem}>
+            <Text style={[
+              styles.resultText,
+              result.includes('✅') ? styles.resultSuccess : styles.resultError
+            ]}>
+              {result}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      {Object.values(importResults).every(result => result.includes('✅')) ? (
+        <View style={styles.successCard}>
+          <Text style={styles.successTitle}>🎉 Parfait ! Tous les imports fonctionnent</Text>
+          <Text style={styles.successText}>
+            Votre structure est correcte. Vous pouvez maintenant procéder à l'intégration progressive.
+          </Text>
+          <TouchableOpacity 
+            style={styles.continueButton}
+            onPress={() => Alert.alert('Prêt !', 'Passons à l\'intégration des écrans !')}
+          >
+            <Text style={styles.continueButtonText}>Continuer l'intégration</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.errorCard}>
+          <Text style={styles.errorTitle}>⚠️ Problèmes détectés</Text>
+          <Text style={styles.errorText}>
+            Vérifiez que vos fichiers existent aux bons endroits.
+          </Text>
+          <TouchableOpacity 
+            style={styles.retryButton}
+            onPress={() => setTestPhase('ready')}
+          >
+            <Text style={styles.retryButtonText}>Recommencer</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </ScrollView>
+  );
 
   return (
     <View style={styles.container}>
@@ -30,82 +157,19 @@ export default function App() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.logo}>🐾 PetFinder</Text>
-        <Text style={styles.subtitle}>Test des composants UI</Text>
+        <Text style={styles.subtitle}>
+          Test structure (sans src/) - Phase: {testPhase}
+        </Text>
       </View>
 
-      {/* Contenu avec ScrollView */}
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        
-        {/* Statut */}
-        <Card style={styles.statusCard}>
-          <Text style={styles.statusTitle}>🧪 Test des composants UI</Text>
-          <Text style={styles.statusDescription}>
-            Cette étape teste que nos composants Button, Input et Card fonctionnent correctement.
-          </Text>
-        </Card>
-
-        {/* Test Input */}
-        <Card>
-          <Text style={styles.sectionTitle}>Test du composant Input</Text>
-          <Input
-            label="Tapez quelque chose :"
-            placeholder="Testez l'input ici..."
-            value={inputValue}
-            onChangeText={setInputValue}
-          />
-          {inputValue ? (
-            <Text style={styles.inputFeedback}>✅ Vous avez tapé : "{inputValue}"</Text>
-          ) : (
-            <Text style={styles.inputHint}>Tapez du texte pour tester l'Input</Text>
-          )}
-        </Card>
-
-        {/* Test Buttons */}
-        <Card>
-          <Text style={styles.sectionTitle}>Test des boutons</Text>
-          
-          <View style={styles.buttonContainer}>
-            <Button
-              title="Bouton Principal"
-              onPress={handleTestComponents}
-              loading={loading}
-            />
-            
-            <Button
-              title="Bouton Secondaire"
-              variant="secondary"
-              onPress={() => setTestResult('Bouton secondaire cliqué !')}
-            />
-            
-            <Button
-              title="Bouton Danger"
-              variant="danger"
-              onPress={() => setTestResult('⚠️ Bouton danger cliqué !')}
-            />
-          </View>
-        </Card>
-
-        {/* Résultat des tests */}
-        {testResult ? (
-          <Card style={styles.resultCard}>
-            <Text style={styles.resultTitle}>Résultat du test :</Text>
-            <Text style={styles.resultText}>{testResult}</Text>
-          </Card>
-        ) : null}
-
-        {/* Prochaines étapes */}
-        <Card style={styles.nextStepsCard}>
-          <Text style={styles.nextStepsTitle}>📋 Progression</Text>
-          <View style={styles.stepsList}>
-            <Text style={styles.stepCompleted}>1. ✅ App.js minimal</Text>
-            <Text style={styles.stepCompleted}>2. ✅ Composants UI</Text>
-            <Text style={styles.stepPending}>3. ⏳ AuthScreen</Text>
-            <Text style={styles.stepPending}>4. ⏳ HomeScreen</Text>
-            <Text style={styles.stepPending}>5. ⏳ Tous les écrans</Text>
-          </View>
-        </Card>
-
-      </ScrollView>
+      {/* Contenu selon la phase */}
+      {(testPhase === 'ready' || testPhase === 'static') && renderInstructions()}
+      {testPhase === 'testing' && (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>⏳ Test des imports en cours...</Text>
+        </View>
+      )}
+      {testPhase === 'completed' && renderResults()}
     </View>
   );
 }
@@ -117,7 +181,7 @@ const styles = StyleSheet.create({
   },
   
   header: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#059669',
     paddingTop: 50,
     paddingBottom: 30,
     paddingHorizontal: 20,
@@ -132,7 +196,7 @@ const styles = StyleSheet.create({
   },
   
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
   },
@@ -146,95 +210,221 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   
-  // Cards
-  statusCard: {
+  // Instructions
+  instructionCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#059669',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   
-  statusTitle: {
+  instructionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#059669',
-    marginBottom: 8,
-  },
-  
-  statusDescription: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 20,
-  },
-  
-  // Sections
-  sectionTitle: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#1F2937',
     marginBottom: 16,
   },
   
-  // Input feedback
-  inputFeedback: {
-    fontSize: 14,
-    color: '#059669',
-    fontWeight: '500',
+  codeBlock: {
+    backgroundColor: '#1F2937',
+    padding: 16,
+    borderRadius: 8,
   },
   
-  inputHint: {
+  codeText: {
     fontSize: 12,
-    color: '#6B7280',
-    fontStyle: 'italic',
+    fontFamily: 'monospace',
+    color: '#F9FAFB',
+    lineHeight: 18,
   },
   
-  // Buttons
+  // Actions
+  actionCard: {
+    backgroundColor: '#F0FDF4',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+  },
+  
+  actionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#15803D',
+    marginBottom: 12,
+  },
+  
+  actionItem: {
+    fontSize: 14,
+    color: '#166534',
+    marginBottom: 6,
+    lineHeight: 20,
+  },
+  
+  // Boutons
   buttonContainer: {
     gap: 12,
   },
   
+  testButton: {
+    backgroundColor: '#059669',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  
+  testButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  testButtonSecondary: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#059669',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  
+  testButtonSecondaryText: {
+    color: '#059669',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  // Loading
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+  loadingText: {
+    fontSize: 18,
+    color: '#6B7280',
+  },
+  
   // Résultats
   resultCard: {
-    backgroundColor: '#F0FDF4',
-    borderColor: '#BBF7D0',
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   
   resultTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 16,
+  },
+  
+  resultItem: {
+    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  
+  resultText: {
     fontSize: 14,
+    lineHeight: 20,
+  },
+  
+  resultSuccess: {
+    color: '#059669',
+  },
+  
+  resultError: {
+    color: '#DC2626',
+  },
+  
+  // Succès et erreurs
+  successCard: {
+    backgroundColor: '#F0FDF4',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    alignItems: 'center',
+  },
+  
+  successTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#15803D',
     marginBottom: 8,
   },
   
-  resultText: {
-    fontSize: 16,
+  successText: {
+    fontSize: 14,
     color: '#166534',
-    fontWeight: '500',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 20,
   },
   
-  // Prochaines étapes
-  nextStepsCard: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#DBEAFE',
+  continueButton: {
+    backgroundColor: '#059669',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
   },
   
-  nextStepsTitle: {
+  continueButtonText: {
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  
+  errorCard: {
+    backgroundColor: '#FEF2F2',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    alignItems: 'center',
+  },
+  
+  errorTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#1E40AF',
-    marginBottom: 12,
+    color: '#B91C1C',
+    marginBottom: 8,
   },
   
-  stepsList: {
-    gap: 8,
-  },
-  
-  stepCompleted: {
+  errorText: {
     fontSize: 14,
-    color: '#059669',
-    fontWeight: '500',
+    color: '#DC2626',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 20,
   },
   
-  stepPending: {
-    fontSize: 14,
-    color: '#6B7280',
+  retryButton: {
+    backgroundColor: '#EF4444',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

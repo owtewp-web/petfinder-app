@@ -1,5 +1,5 @@
-// src/components/ui/index.js
-// Composants UI robustes et testés pour PetFinder
+// components/ui/index.js
+// Composants UI pour PetFinder (structure sans src/)
 
 import React from 'react';
 import {
@@ -23,7 +23,6 @@ export const Button = ({
   const getButtonStyle = () => {
     let baseStyle = [styles.button];
     
-    // Styles selon la variante
     switch (variant) {
       case 'secondary':
         baseStyle.push(styles.buttonSecondary);
@@ -35,12 +34,10 @@ export const Button = ({
         baseStyle.push(styles.buttonPrimary);
     }
     
-    // Style désactivé
     if (disabled || loading) {
       baseStyle.push(styles.buttonDisabled);
     }
     
-    // Style personnalisé
     if (style) {
       baseStyle.push(style);
     }
@@ -50,11 +47,9 @@ export const Button = ({
 
   const getTextStyle = () => {
     let textStyle = [styles.buttonText];
-    
     if (variant === 'secondary') {
       textStyle.push(styles.buttonTextSecondary);
     }
-    
     return textStyle;
   };
 
@@ -94,12 +89,10 @@ export const Input = ({
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
-      {/* Label */}
       {label && (
         <Text style={styles.inputLabel}>{label}</Text>
       )}
       
-      {/* Input */}
       <TextInput
         style={[
           styles.input, 
@@ -119,7 +112,6 @@ export const Input = ({
         {...otherProps}
       />
       
-      {/* Message d'erreur */}
       {error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : null}
@@ -133,7 +125,6 @@ export const Card = ({
   style = {},
   onPress = null 
 }) => {
-  // Si onPress est fourni, utiliser TouchableOpacity, sinon View
   const CardComponent = onPress ? TouchableOpacity : View;
   
   return (
@@ -147,9 +138,9 @@ export const Card = ({
   );
 };
 
-// ===== STYLES POUR LES COMPOSANTS =====
+// ===== STYLES =====
 const styles = StyleSheet.create({
-  // ===== STYLES BUTTON =====
+  // Button styles
   button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -159,48 +150,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minHeight: 48,
   },
-  
   buttonPrimary: {
     backgroundColor: '#3B82F6',
   },
-  
   buttonSecondary: {
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#3B82F6',
   },
-  
   buttonDanger: {
     backgroundColor: '#EF4444',
   },
-  
   buttonDisabled: {
     backgroundColor: '#9CA3AF',
     borderColor: '#9CA3AF',
   },
-  
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-  
   buttonTextSecondary: {
     color: '#3B82F6',
   },
 
-  // ===== STYLES INPUT =====
+  // Input styles
   inputContainer: {
     marginBottom: 16,
   },
-  
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: '#374151',
     marginBottom: 8,
   },
-  
   input: {
     borderWidth: 1,
     borderColor: '#D1D5DB',
@@ -211,17 +194,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     minHeight: 48,
   },
-  
   inputMultiline: {
     minHeight: 96,
     textAlignVertical: 'top',
   },
-  
   inputError: {
     borderColor: '#EF4444',
     backgroundColor: '#FEF2F2',
   },
-  
   errorText: {
     fontSize: 12,
     color: '#EF4444',
@@ -229,7 +209,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 
-  // ===== STYLES CARD =====
+  // Card styles
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
