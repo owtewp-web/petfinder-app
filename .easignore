@@ -1,0 +1,23 @@
+# .easignore - Ignorer les dossiers pour éviter les erreurs de permissions
+# Tout le code est maintenant intégré dans App.js
+
+# Dossiers problématiques à ignorer
+components/
+screens/
+navigation/
+styles/
+utils/
+
+# Autres dossiers potentiellement problématiques
+src/
+
+# Fichiers de développement
+*.log
+.expo/
+.vscode/
+node_modules/
+
+# Fichiers de test
+__tests__/
+*.test.js
+*.spec.js
